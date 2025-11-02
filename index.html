@@ -6,11 +6,36 @@
   <title>lucy's page!</title>
   <link rel="stylesheet" href="index.css">
   <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+  <style>
+    .fund-banner {
+      background: #ffcccb;
+      color: #000;
+      text-align: center;
+      font-weight: bold;
+      padding: 10px;
+      font-size: 1.2em;
+      border-bottom: 2px solid #ff0000;
+    }
+    .gfm-container {
+      display: flex;
+      justify-content: center;
+      margin: 10px 0 30px 0;
+    }
+  </style>
 </head>
 <body>
-  <h1>hey, i'm lucy! welcome to my page</h1>
 
-  <div class="badges">
+  <div class="fund-banner">please help my dog ash!</div>
+  <div class="gfm-container">
+    <div class="gfm-embed" data-url="https://www.gofundme.com/f/help-ash-get-urgent-vet-care/widget/large?sharesheet=undefined&attribution_id=sl:481f570a-0a9b-4aae-a57c-a71cb0f5800e"></div>
+  </div>
+  <script defer src="https://www.gofundme.com/static/js/embed.js"></script>
+
+  <header>
+    <h1>hey, im lucy! welcome to my page</h1>
+  </header>
+
+  <section class="badges">
     <img src="badges/cloud9.gif" alt="cloud9 badge">
     <img src="badges/linux-directory.gif" alt="linux directory">
     <img src="badges/linuxnow.gif" alt="linux now">
@@ -26,33 +51,29 @@
     <img src="badges/mousepow.gif" alt="mouse power">
     <img src="badges/transnow2.gif" alt="trans rights now">
     <img src="badges/debian-linux-4037350441.gif" alt="powered by debian" class="pixel-button">
-  </div>
-
-  <section>
-    <h1>about me!</h1>
-    <p>i'm a 15-year-old from the new york suburbs! i like coding and tinkering with technology in my spare time!</p>
-    <p>p.s. i love my girlfriend!!</p>
   </section>
 
-  <section>
+  <section id="about-me">
+    <h1>about me!</h1>
+    <p>i'm a 15-year-old from the new york suburbs! i like coding and tinkering with technology in my spare time!</p>
+  </section>
+
+  <section id="projects">
     <h1>my projects</h1>
     <h4>pulled from my github page!</h4>
     <div id="repo-list">loading my github projects...</div>
+  </section>
+
+  <section id="blog">
+    <h1>my blog!</h1>
+    <p><strong>10/26/25</strong> — things are gonna be just alright <3</p>
   </section>
 
   <div class="shooting-star"></div>
   <div class="shooting-star" style="left: 20%; animation-delay: 1s;"></div>
   <div class="shooting-star" style="left: 70%; animation-delay: 2s;"></div>
 
-  <section>
-    <h1>my blog!</h1>
-    <p><strong>9/15/25</strong> — guys i'm so excited, my birthday is in only three days and i might be getting a guitar which i'm so hyped for!!</p>
-    <p><strong>9/28/25</strong> — i got a girlfriend a week ago, she is so gorgeous guys I LOVE HER AAAA</p>
-    <p><strong>10/26/25</strong> — on my birthday which was the 18th of september i got my nose pierced IT KEEPS FALLING OUTTT but it closed today :c its ok tho because im getting it repierced and i get yummy food after so yay</p>
-  </section>
-
   <script>
-  
     for (let i = 0; i < 100; i++) {
       const star = document.createElement('div');
       star.classList.add('star');
@@ -61,7 +82,6 @@
       star.style.animationDuration = (1 + Math.random() * 2) + 's';
       document.body.appendChild(star);
     }
-
 
     const username = "lucysgutz";
     const repoList = document.getElementById("repo-list");
@@ -78,9 +98,7 @@
           `;
           repoList.appendChild(item);
         });
-        if (repos.length === 0) {
-          repoList.textContent = "no public repos found.";
-        }
+        if (repos.length === 0) repoList.textContent = "no public repos found.";
       })
       .catch(error => {
         console.error("error fetching repos:", error);
