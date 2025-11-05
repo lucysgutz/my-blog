@@ -30,8 +30,7 @@ body::before {
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    background: url('https://i.imgur.com/Xv1HzfT.png') repeat; /* subtle pixel noise */
-    opacity: 0.1;
+    background: black;
     z-index: 0;
     pointer-events: none;
 }
@@ -132,4 +131,23 @@ img.pixel-button:hover {
     max-width: 600px;
     text-align: left;
     box-shadow: 0 0 15px rgba(94,234,212,0.3);
+}
+.gfm-container {
+    display: block;
+    max-width: 300px;
+    margin: 50px auto 20px auto;
+    opacity: 0.6;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 5px;
+    transition: opacity 0.3s ease;
+}
+
+.gfm-container:hover {
+    opacity: 1;
+}
+
+.gfm-embed iframe {
+    width: 100% !important;
+    height: 150px !important;
 }
