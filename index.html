@@ -1,97 +1,231 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>lucy's page!</title>
-  <link rel="stylesheet" href="index.css">
-  <link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>lucy's space</title>
+<style>
+  body {
+    background-color: black;
+    font-family: "Courier New", monospace;
+    color: red;
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    overflow-x: hidden;
+  }
+
+  h1 {
+    color: #ff0000;
+    font-size: 3em;
+    text-shadow: 2px 2px #330000;
+    margin: 20px 0;
+    animation: flicker 1.5s infinite;
+  }
+
+  @keyframes flicker {
+    0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
+    20%,22%,24%,55% { opacity: 0.3; }
+  }
+
+  h2 {
+    color: #ff4444;
+    font-size: 2em;
+    text-shadow: 1px 1px #220000;
+  }
+
+  a {
+    color: #ff6666;
+    text-decoration: none;
+    font-weight: bold;
+  }
+
+  a:hover {
+    color: #ff0000;
+    text-decoration: underline;
+  }
+
+  .blink {
+    animation: blink 1s steps(1, start) infinite;
+  }
+
+  @keyframes blink {
+    50% { visibility: hidden; }
+  }
+
+  table {
+    border: 3px solid red;
+    width: 90%;
+    margin: 10px auto;
+    background-color: #110000;
+    border-radius: 10px;
+  }
+
+  td {
+    padding: 10px;
+    vertical-align: top;
+  }
+
+  marquee {
+    color: #ff5555;
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+
+  .badges img {
+    margin: 5px;
+    width: 60px;
+  }
+
+  .hit-counter img {
+    margin-top: 10px;
+  }
+
+  .star {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: red;
+    opacity: 0.8;
+    animation: floatStars linear infinite;
+  }
+
+  @keyframes floatStars {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-600px); }
+  }
+
+  #enterScreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: black;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #enterScreen h1 {
+    font-size: 5em;
+    color: red;
+    text-shadow: 2px 2px #330000;
+    animation: flicker 1.5s infinite;
+  }
+
+  #enterScreen button {
+    margin-top: 30px;
+    padding: 20px 50px;
+    font-size: 2em;
+    color: red;
+    background: black;
+    border: 3px solid red;
+    cursor: pointer;
+  }
+
+  #enterScreen button:hover {
+    background: #220000;
+    color: #ff5555;
+  }
+
+  #currentTrack {
+    color: #ff7777;
+    margin-top: 10px;
+    font-weight: bold;
+  }
+
+</style>
 </head>
 <body>
 
-  <div class="fund-banner">please help my dog ash!</div>
-  <div class="gfm-container">
-    <div class="gfm-embed" data-url="https://www.gofundme.com/f/help-ash-get-urgent-vet-care/widget/large?sharesheet=undefined&attribution_id=sl:481f570a-0a9b-4aae-a57c-a71cb0f5800e"></div>
-  </div>
-  <script defer src="https://www.gofundme.com/static/js/embed.js"></script>
+<div id="enterScreen">
+  <h1>WHO'S THERE?</h1>
+  <button id="enterBtn">ENTER</button>
+</div>
 
-  <header class="box">
-    <h1>hey, i'm lucy! welcome to my page</h1>
-  </header>
+<h1>~*lucy's space*~</h1>
+<h2 class="blink">under construction</h2>
 
-  <section class="badges box">
-    <h2>my badges</h2>
-    <div class="badge-container">
-      <img src="badges/cloud9.gif" alt="cloud9 badge">
-      <img src="badges/linux-directory.gif" alt="linux directory">
-      <img src="badges/linuxnow.gif" alt="linux now">
-      <a href="https://github.com/lucysgutz/ddFast" target="_blank" rel="noopener noreferrer">
-        <img src="badges/meow.gif" alt="meow badge">
-      </a>
-      <img src="badges/welcome.gif" alt="welcome badge">
-      <img src="badges/bloodcovered.gif" alt="bloodcovered badge">
-      <img src="badges/devils.gif" alt="devils badge">
-      <img src="badges/deletetwitter.gif" alt="delete twitter badge">
-      <img src="badges/iebad.gif" alt="internet explorer bad">
-      <img src="badges/ieexploit.gif" alt="internet explorer exploit">
-      <img src="badges/mousepow.gif" alt="mouse power">
-      <img src="badges/transnow2.gif" alt="trans rights now">
-      <img src="badges/debian-linux-4037350441.gif" alt="powered by debian" class="pixel-button">
-    </div>
-  </section>
+<table>
+<tr>
+<td colspan="2">
+  <marquee behavior="scroll" direction="left">down with the elephant, down with the ass! build a party for the working class!</marquee>
+</td>
+</tr>
+<tr>
+<td width="50%">
+  <table border="1" cellpadding="5">
+    <tr><td><p>hiya! im lucy, a 15 year old kid from the new york suburbs, im a beginner software engineer & amateur web developer.</p></td></tr>
+    <tr><td>
+      <div class="badges">
+        <img src="badges/iebad.gif" alt="badge 1">
+        <img src="badges/linuxnow.gif" alt="badge 2">
+        <img src="badges/ieexploit.gif" alt="badge 3">
+        <img src="badges/transnow2.gif">
+        <img src="badges/bloodcovered.gif">
+        <img src="badges/deletetwitter.gif">
+      </div>
+    </td></tr>
+  </table>
+</td>
+<td width="50%">
+  <table border="1" cellpadding="5">
+    <tr><td><h2>latest blog post</h2></td></tr>
+    <tr><td><marquee behavior="scroll" direction="left">10/7/2025</marquee></td></tr>
+    <tr><td><p>rethemed my page guys how do we like it!</p></td></tr>
+  </table>
+</td>
+</tr>
+</table>
 
-  <section id="about-me" class="box">
-    <h1>about me!</h1>
-    <p>i'm a 15-year-old from the new york suburbs! i like coding and tinkering with technology in my spare time!</p>
-  </section>
+<div id="currentTrack">Now Playing: none</div>
 
-  <section id="projects" class="box">
-    <h1>my projects</h1>
-    <h4>pulled from my github page!</h4>
-    <div id="repo-list">loading my github projects...</div>
-  </section>
+<script>
+  for(let i=0;i<50;i++){
+    let star = document.createElement('div');
+    star.className = 'star';
+    star.style.left = Math.random() * window.innerWidth + 'px';
+    star.style.top = Math.random() * window.innerHeight + 'px';
+    star.style.animationDuration = (2 + Math.random()*3) + 's';
+    document.body.appendChild(star);
+  }
 
-  <section id="blog" class="box">
-    <h1>my blog!</h1>
-<p><strong>11/05/25</strong> — i made a cool tool that lets me just write to my blog using my terminal!</p>
+  document.getElementById('enterBtn').addEventListener('click', () => {
+    document.getElementById('enterScreen').style.display = 'none';
 
-  <div class="shooting-star"></div>
-  <div class="shooting-star" style="left: 20%; animation-delay: 1s;"></div>
-  <div class="shooting-star" style="left: 70%; animation-delay: 2s;"></div>
+    const tracks = [
+      "setlist/kill.mp3",
+      "setlist/the more you know.mp3",
+      "setlist/I plan to leave the internet fuck your trend.mp3"
+    ];
 
-  <script>
+    const audio = document.createElement('audio');
+    audio.autoplay = true;
+    audio.volume = 0.3;
+    document.body.appendChild(audio);
 
-    for (let i = 0; i < 100; i++) {
-      const star = document.createElement('div');
-      star.classList.add('star');
-      star.style.top = Math.random() * 100 + 'vh';
-      star.style.left = Math.random() * 100 + 'vw';
-      star.style.animationDuration = (1 + Math.random() * 2) + 's';
-      document.body.appendChild(star);
+    let current = 0;
+    function playTrack(i){
+      audio.src = tracks[i];
+      audio.play();
+      document.getElementById('currentTrack').textContent = 'Now Playing: ' + tracks[i].split('/')[1];
     }
 
+    audio.addEventListener('ended', () => {
+      current++;
+      if(current < tracks.length){
+        playTrack(current);
+      } else {
+        document.getElementById('currentTrack').textContent = 'Now Playing: none';
+      }
+    });
 
-    const username = "lucysgutz";
-    const repoList = document.getElementById("repo-list");
+    playTrack(current);
+  });
+</script>
 
-    fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`)
-      .then(response => response.json())
-      .then(repos => {
-        repoList.innerHTML = "";
-        repos.forEach(repo => {
-          const item = document.createElement("p");
-          item.innerHTML = `
-            <a href="${repo.html_url}" target="_blank" rel="noopener noreferrer">${repo.name}</a>
-            <span style="color: gray; font-size: 0.9em;"> – ${repo.description || "i didnt write a description on github yet!"}</span>
-          `;
-          repoList.appendChild(item);
-        });
-        if (repos.length === 0) repoList.textContent = "no public repos found.";
-      })
-      .catch(error => {
-        console.error("error fetching repos:", error);
-        repoList.textContent = "couldn't load repos right now.";
-      });
-  </script>
 </body>
 </html>
