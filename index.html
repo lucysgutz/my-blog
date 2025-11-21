@@ -4,155 +4,27 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>lucy's space</title>
-<style>
-  body {
-    background-color: black;
-    font-family: "Courier New", monospace;
-    color: red;
-    margin: 0;
-    padding: 0;
-    text-align: center;
-    overflow-x: hidden;
-  }
-
-  h1 {
-    color: #ff0000;
-    font-size: 3em;
-    text-shadow: 2px 2px #330000;
-    margin: 20px 0;
-    animation: flicker 1.5s infinite;
-  }
-
-  @keyframes flicker {
-    0%,19%,21%,23%,25%,54%,56%,100% { opacity: 1; }
-    20%,22%,24%,55% { opacity: 0.3; }
-  }
-
-  h2 {
-    color: #ff4444;
-    font-size: 2em;
-    text-shadow: 1px 1px #220000;
-  }
-
-  a {
-    color: #ff6666;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  a:hover {
-    color: #ff0000;
-    text-decoration: underline;
-  }
-
-  .blink {
-    animation: blink 1s steps(1, start) infinite;
-  }
-
-  @keyframes blink {
-    50% { visibility: hidden; }
-  }
-
-  table {
-    border: 3px solid red;
-    width: 90%;
-    margin: 10px auto;
-    background-color: #110000;
-    border-radius: 10px;
-  }
-
-  td {
-    padding: 10px;
-    vertical-align: top;
-  }
-
-  marquee {
-    color: #ff5555;
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-
-  .badges img {
-    margin: 5px;
-    width: 60px;
-  }
-
-  .hit-counter img {
-    margin-top: 10px;
-  }
-
-  .star {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: red;
-    opacity: 0.8;
-    animation: floatStars linear infinite;
-  }
-
-  @keyframes floatStars {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(-600px); }
-  }
-
-  #enterScreen {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: black;
-    z-index: 9999;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-
-  #enterScreen h1 {
-    font-size: 5em;
-    color: red;
-    text-shadow: 2px 2px #330000;
-    animation: flicker 1.5s infinite;
-  }
-
-  #enterScreen button {
-    margin-top: 30px;
-    padding: 20px 50px;
-    font-size: 2em;
-    color: red;
-    background: black;
-    border: 3px solid red;
-    cursor: pointer;
-  }
-
-  #enterScreen button:hover {
-    background: #220000;
-    color: #ff5555;
-  }
-
-  #currentTrack {
-    color: #ff7777;
-    margin-top: 10px;
-    font-weight: bold;
-  }
-
-</style>
+<link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 
-<div id="enterScreen">
+<div id="enterScreen" class="panel">
   <h1>WHO'S THERE?</h1>
-  <button id="enterBtn">ENTER</button>
+  <div class="enter-actions">
+    <button id="enterBtn">ENTER</button>
+  </div>
 </div>
 
-<h1>~*lucy's space*~</h1>
-<h2 class="blink">under construction</h2>
+<div class="masthead">
+  <h1 class="logo glow">~*lucy's space*~</h1>
+  <h2 class="blink">under construction</h2>
+  <div id="retroClock" aria-hidden="true"></div>
+</div>
 
 <table>
 <tr>
 <td colspan="2">
-  <marquee behavior="scroll" direction="left">down with the elephant, down with the ass! build a party for the working class!</marquee>
+  <div class="retro-marquee"><marquee behavior="scroll" direction="left">down with the elephant, down with the ass! build a party for the working class!</marquee></div>
 </td>
 </tr>
 <tr>
@@ -161,12 +33,12 @@
     <tr><td><p>hiya! im lucy, a 15 year old kid from the new york suburbs, im a beginner software engineer & amateur web developer.</p></td></tr>
     <tr><td>
       <div class="badges">
-        <img src="badges/iebad.gif" alt="badge 1">
-        <img src="badges/linuxnow.gif" alt="badge 2">
-        <img src="badges/ieexploit.gif" alt="badge 3">
-        <img src="badges/transnow2.gif">
-        <img src="badges/bloodcovered.gif">
-        <img src="badges/deletetwitter.gif">
+        <img loading="lazy" src="badges/iebad.gif" alt="IE badge">
+        <img loading="lazy" src="badges/linuxnow.gif" alt="Linux badge">
+        <img loading="lazy" src="badges/ieexploit.gif" alt="IE exploit badge">
+        <img loading="lazy" src="badges/transnow2.gif" alt="trans badge">
+        <img loading="lazy" src="badges/bloodcovered.gif" alt="blood covered badge">
+        <img loading="lazy" src="badges/deletetwitter.gif" alt="deletetwitter badge">
       </div>
     </td></tr>
   </table>
@@ -181,7 +53,20 @@
 </tr>
 </table>
 
+<section id="projects">
+    <div class="projects-header">
+    <h2>Projects</h2>
+    <div>
+      <button id="refreshProjects">Refresh</button>
+      <button id="sortProjects" class="sort-btn" data-sort="updated">Sort: Updated</button>
+    </div>
+  </div>
+  <div id="projectsList">Loading projects…</div>
+</section>
+
 <div id="currentTrack">Now Playing: none</div>
+
+<button id="backToTop" aria-label="Back to top">top</button>
 
 <script>
   for(let i=0;i<50;i++){
@@ -225,6 +110,254 @@
 
     playTrack(current);
   });
+</script>
+
+<!-- README Modal -->
+<div id="modalBackdrop" class="modal-backdrop" style="display:none" aria-hidden="true">
+  <div class="modal" role="document">
+    <button class="close" aria-label="Close">✕</button>
+    <h3 id="modalTitle">Repository</h3>
+    <div id="modalContent">Loading…</div>
+  </div>
+</div>
+
+<script>
+  // modal + readme fetch + burst animation
+  const modalBackdrop = document.getElementById('modalBackdrop');
+  const modalTitle = document.getElementById('modalTitle');
+  const modalContent = document.getElementById('modalContent');
+  modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) closeModal(); });
+  modalBackdrop.querySelector('.close').addEventListener('click', closeModal);
+
+  function openModal(){ modalBackdrop.style.display='flex'; modalBackdrop.classList.add('show'); modalBackdrop.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
+  function closeModal(){ modalBackdrop.classList.remove('show'); modalBackdrop.setAttribute('aria-hidden','true'); setTimeout(()=> modalBackdrop.style.display='none',180); document.body.style.overflow=''; }
+
+  async function openReadmeModal(owner, repo, title, url, description){
+    modalTitle.textContent = title;
+    modalContent.textContent = 'Loading README…';
+    openModal();
+    try{
+      const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, { headers: { Accept: 'application/vnd.github.v3.raw' } });
+      if(!resp.ok) throw new Error('No README');
+      const txt = await resp.text();
+      // simple markdown -> plaintext fallback (avoid heavy libs)
+      modalContent.textContent = txt;
+      // add a raw link
+      const link = document.createElement('a'); link.href = url; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent = 'Open repository on GitHub'; link.style.display='block'; link.style.marginTop='12px';
+      modalContent.appendChild(link);
+    }catch(err){
+      modalContent.textContent = 'No README available.';
+    }
+  }
+
+  // close on Escape
+  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modalBackdrop.classList.contains('show')) closeModal(); });
+
+  // spawn a small burst animation at screen coords
+  function spawnBurst(x,y){
+    const el = document.createElement('div'); el.className='burst'; document.body.appendChild(el);
+    el.style.left = x + 'px'; el.style.top = y + 'px';
+    requestAnimationFrame(()=> el.classList.add('animate'));
+    setTimeout(()=> el.remove(), 700);
+  }
+</script>
+
+<script>
+  // Enhanced projects loader with local cache and refresh button
+  (function(){
+    const listEl = document.getElementById('projectsList');
+    const refreshBtn = document.getElementById('refreshProjects');
+    const CACHE_KEY = 'github_repos_lucy407_v1';
+    const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+
+    let currentSort = 'updated';
+    const sortBtn = document.getElementById('sortProjects');
+    sortBtn.addEventListener('click', ()=>{
+      // cycle sorts: updated -> stars -> name -> updated
+      currentSort = currentSort === 'updated' ? 'stars' : currentSort === 'stars' ? 'name' : 'updated';
+      sortBtn.textContent = currentSort === 'updated' ? 'Sort: Updated' : currentSort === 'stars' ? 'Sort: Stars' : 'Sort: Name';
+      fetchAndRender(true);
+    });
+
+    function render(repos){
+      if(!repos || repos.length === 0){ listEl.textContent = 'No public projects found.'; return; }
+      const container = document.createElement('div');
+      container.className = 'repo-list';
+      if(currentSort === 'updated') repos.sort((a,b)=> new Date(b.updated_at)-new Date(a.updated_at));
+      else if(currentSort === 'stars') repos.sort((a,b)=> (b.stargazers_count||0) - (a.stargazers_count||0));
+      else repos.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
+      repos.forEach(r => {
+        const item = document.createElement('div');
+        item.className = 'repo panel';
+        item.setAttribute('tabindex','0');
+        item.setAttribute('role','button');
+        item.dataset.clone = r.clone_url;
+        item.dataset.owner = r.owner.login;
+        item.dataset.repo = r.name;
+        item.innerHTML = `
+          <div class="repo-head"><a href="${r.html_url}" target="_blank" rel="noopener noreferrer">${r.name}</a></div>
+          ${r.description?`<p>${r.description}</p>`:''}
+          <div class="meta">⭐ ${r.stargazers_count} • ${r.language || '—'} • updated ${new Date(r.updated_at).toLocaleDateString()}</div>
+          <div class="repo-controls">
+            <button class="detailsBtn">Details</button>
+            <button class="copyBtn">Copy Clone</button>
+            <a class="openBtn" href="${r.html_url}" target="_blank" rel="noopener noreferrer">Open</a>
+          </div>
+          <div class="repo-details" aria-hidden="true" style="display:none"></div>
+        `;
+
+        // attach interactive handlers with closures
+        (function(repo, el){
+          const detailsEl = el.querySelector('.repo-details');
+          const detailsBtn = el.querySelector('.detailsBtn');
+          const copyBtn = el.querySelector('.copyBtn');
+
+          detailsBtn.addEventListener('click', (ev)=>{
+            // open a modal with the README fetched on demand
+            ev.preventDefault();
+            openReadmeModal(repo.owner.login, repo.name, repo.name, repo.html_url, repo.description);
+          });
+
+          copyBtn.addEventListener('click', async (ev)=>{
+            try{
+              await navigator.clipboard.writeText(repo.clone_url);
+              showToast('Clone URL copied');
+              spawnBurst(ev.clientX, ev.clientY);
+            }catch(e){
+              showToast('Copy failed');
+            }
+          });
+        })(r, item);
+
+        container.appendChild(item);
+      });
+      listEl.innerHTML = '';
+      listEl.appendChild(container);
+
+      // reveal on scroll
+      const observer = new IntersectionObserver((entries)=>{
+        entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('visible'); });
+      },{threshold:0.12});
+      container.querySelectorAll('.repo').forEach(el=>observer.observe(el));
+
+      // keyboard navigation inside repo list
+      let focusedIndex = 0;
+      const items = Array.from(container.querySelectorAll('.repo'));
+      items.forEach((it, idx)=>{
+        it.addEventListener('keydown', (ev)=>{
+          if(ev.key === 'ArrowDown'){ ev.preventDefault(); const next = items[(idx+1)%items.length]; next.focus(); }
+          else if(ev.key === 'ArrowUp'){ ev.preventDefault(); const prev = items[(idx-1+items.length)%items.length]; prev.focus(); }
+          else if(ev.key === 'Enter'){ ev.preventDefault(); const btn = it.querySelector('.detailsBtn'); btn && btn.click(); }
+          else if(ev.key.toLowerCase() === 'c'){ ev.preventDefault(); const clone = it.dataset.clone; navigator.clipboard && navigator.clipboard.writeText(clone).then(()=>showToast('Clone URL copied')); }
+        });
+      });
+    }
+
+    function setCache(data){
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data})); }catch(e){}
+    }
+
+    function getCache(){
+      try{ const raw = localStorage.getItem(CACHE_KEY); if(!raw) return null; const parsed = JSON.parse(raw); if(Date.now()-parsed.ts > CACHE_TTL) return null; return parsed.data;}catch(e){return null}
+    }
+
+    function fetchAndRender(force=false){
+      const cached = getCache();
+      if(cached && !force){ render(cached); return; }
+      listEl.textContent = 'Loading projects…';
+      fetch('https://api.github.com/users/lucy407/repos?per_page=100')
+        .then(res => {
+          if(!res.ok) throw new Error('GitHub API error ' + res.status);
+          return res.json();
+        })
+        .then(repos => { setCache(repos); render(repos); })
+        .catch(err => {
+          const fallback = getCache();
+          if(fallback){ render(fallback); }
+          else listEl.textContent = 'Could not load projects: ' + err.message;
+        });
+    }
+
+    refreshBtn.addEventListener('click', ()=>{ fetchAndRender(true); });
+    fetchAndRender();
+
+    // removed project search per user request
+  })();
+</script>
+
+<script>
+  // QoL: keyboard/UX improvements for the enter screen and audio
+  (function(){
+    const enter = document.getElementById('enterBtn');
+    const enterScreen = document.getElementById('enterScreen');
+
+    function hideIntro(){
+      enterScreen.classList.add('fade-out');
+      setTimeout(()=> enterScreen.style.display='none',450);
+    }
+
+    enter.addEventListener('click', hideIntro);
+
+    // allow Enter or Space to dismiss when focused
+    document.addEventListener('keydown', (e)=>{
+      if(document.body.contains(enterScreen) && enterScreen.style.display !== 'none'){
+        if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
+          e.preventDefault(); hideIntro();
+        }
+        if(e.key === 'Escape'){
+          e.preventDefault(); hideIntro();
+        }
+      }
+    });
+  })();
+
+  // small retro clock and back-to-top logic
+  (function(){
+    const clock = document.getElementById('retroClock');
+    function tick(){
+      try{
+        // Use Intl to format time in Eastern Time (handles EST/EDT automatically)
+        const now = new Date();
+        const parts = new Intl.DateTimeFormat('en-US', {
+          timeZone: 'America/New_York',
+          hour12: true,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        }).formatToParts(now).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
+        const period = parts.dayPeriod || parts.period || '';
+        clock.textContent = `${parts.hour}:${parts.minute}:${parts.second}${period? ' ' + period : ''}`;
+      }catch(e){
+        // Fallback to local 12-hour time if Intl or timezone isn't available
+        const d = new Date();
+        let h = d.getHours();
+        const period = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12; // convert 0 => 12
+        const hh = String(h).padStart(2,'0');
+        const mm = String(d.getMinutes()).padStart(2,'0');
+        const ss = String(d.getSeconds()).padStart(2,'0');
+        clock.textContent = `${hh}:${mm}:${ss} ${period}`;
+      }
+    }
+    if(clock) setInterval(tick,1000), tick();
+
+    const back = document.getElementById('backToTop');
+    window.addEventListener('scroll', ()=>{ if(window.scrollY > 220) back.classList.add('show'); else back.classList.remove('show'); });
+    back.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
+  })();
+
+  // Fade-in body once JS runs
+  document.documentElement.classList.remove('fade-in');
+  document.documentElement.classList.add('loaded');
+
+  // small toast helper
+  function showToast(msg){
+    let t = document.querySelector('.toast');
+    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(t._t);
+    t._t = setTimeout(()=> t.classList.remove('show'),2000);
+  }
 </script>
 
 </body>
