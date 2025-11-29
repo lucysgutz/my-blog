@@ -3,362 +3,615 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>lucy's space</title>
-<link rel="stylesheet" href="css/styles.css">
+<title>lucys.space</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.21/lodash.min.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --glass-bg: rgba(20, 20, 20, 0.6);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent: #aaddff;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #000;
+    color: #f0f0f0;
+    font-family: 'Space Grotesk', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  body.active-site {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  canvas {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    pointer-events: auto; 
+  }
+
+  #startScreen {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4vw;
+    cursor: pointer;
+    background: #000;
+    z-index: 50;
+    transition: opacity 1s ease;
+  }
+
+  #lyrics {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    white-space: pre-line;
+    font-size: 2rem;
+    opacity: 1;
+    z-index: 10;
+    pointer-events: none;
+    text-shadow: 0 0 15px rgba(255,255,255,0.3);
+    width: 80%;
+  }
+
+  #skipBtn {
+    position: fixed;
+    bottom: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 32px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50px;
+    color: white;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1rem;
+    cursor: pointer;
+    opacity: 0;
+    pointer-events: none; 
+    z-index: 60; 
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+    text-transform: lowercase; 
+  }
+
+  #skipBtn.visible {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  #skipBtn:hover {
+    background: rgba(255,255,255,0.2);
+    border-color: white;
+  }
+
+  #musicPopup {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(10px);
+    padding: 10px 20px 10px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+    z-index: 90;
+  }
+
+  #musicPopup.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  #musicPopup img {
+    width: 50px;
+    height: 50px;
+    border-radius: 6px;
+    object-fit: cover;
+  }
+
+  #musicPopup .info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #musicPopup .label {
+    font-size: 0.75rem;
+    color: #888;
+    text-transform: lowercase; 
+    letter-spacing: 1px;
+  }
+
+  #musicPopup .song-name {
+    font-size: 1rem;
+    color: #fff;
+  }
+
+  #mainContent {
+    display: none;
+    position: relative;
+    z-index: 20;
+    min-height: 100vh;
+    padding-top: 100px;
+    background: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8) 80%);
+  }
+
+  nav {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(12px);
+    padding: 10px 30px;
+    border-radius: 50px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    z-index: 100;
+    display: flex;
+    gap: 30px;
+  }
+
+  nav a {
+    color: #ccc;
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s;
+    text-transform: lowercase; 
+  }
+
+  nav a:hover, nav a.active {
+    color: #fff;
+    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+  }
+
+  .content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px 100px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+
+  .content-container.fade-in {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 20px;
+    margin-bottom: 60px;
+  }
+
+  .hero-title {
+    font-size: 4rem;
+    font-weight: 600;
+    background: linear-gradient(to right, #fff, #aaa);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0;
+    text-transform: lowercase; 
+  }
+
+  .hero-subtitle {
+    font-size: 1.2rem;
+    color: #888;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  .about-card {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    padding: 40px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    margin-top: 40px;
+    text-align: left;
+  }
+
+  .about-card h2 {
+    text-transform: lowercase; 
+  }
+  
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 25px;
+    transition: transform 0.3s, background 0.3s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.3);
+  }
+
+  .card h3 { margin: 0 0 10px 0; font-size: 1.2rem; }
+  .card p { color: #aaa; font-size: 0.9rem; line-height: 1.5; }
+  .card a { color: var(--accent); text-decoration: none; display: inline-block; margin-top: 15px; }
+
+  .flash-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 200;
+  }
+</style>
 </head>
 <body>
 
-<div id="enterScreen" class="panel">
-  <h1>WHO'S THERE?</h1>
-  <div class="enter-actions">
-    <button id="enterBtn">ENTER</button>
+<div id="startScreen">click to enter</div>
+
+<div id="lyrics"></div>
+
+<button id="skipBtn">skip intro</button>
+
+<div id="musicPopup">
+  <img src="makka.png" alt="cover" onerror="this.src='https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fis1-ssl.mzstatic.com%2Fimage%2Fthumb%2FMusic221%2Fv4%2Fb6%2F97%2Fad%2Fb697ad6f-b61d-f200-0f19-807c4472e93e%2F840471804079.png%2F1200x630bf-60.jpg&f=1&nofb=1&ipt=67b9ad4488a94cc9acc4af2e01cdaa53afd40ece65935af05222dc5a28223f22'">
+  <div class="info">
+    <span class="label">now playing</span>
+    <span class="song-name">makka - fakemink</span>
   </div>
 </div>
 
-<div class="masthead">
-  <h1 class="logo glow">~*lucy's space*~</h1>
-  <h2 class="blink">under construction</h2>
-  <div id="retroClock" aria-hidden="true"></div>
+<audio id="music" src="makkafakemink.mp3" loop></audio>
+
+<div class="flash-overlay"></div>
+
+<div id="mainContent">
+  <nav>
+    <a href="#" class="nav-link active" data-page="home">home</a>
+    <a href="#" class="nav-link" data-page="projects">projects</a>
+    <a href="#" class="nav-link" data-page="blog">blog</a>
+  </nav>
+
+  <div id="dynamicContent" class="content-container"></div>
 </div>
-
-<table>
-<tr>
-<td colspan="2">
-  <div class="retro-marquee"><marquee behavior="scroll" direction="left">down with the elephant, down with the ass! build a party for the working class!</marquee></div>
-</td>
-</tr>
-<tr>
-<td width="50%">
-  <table border="1" cellpadding="5">
-    <tr><td><p>hiya! im lucy, a 15 year old kid from the new york suburbs, im a beginner software engineer & amateur web developer.</p></td></tr>
-    <tr><td>
-      <div class="badges">
-        <img loading="lazy" src="badges/iebad.gif" alt="IE badge">
-        <img loading="lazy" src="badges/linuxnow.gif" alt="Linux badge">
-        <img loading="lazy" src="badges/ieexploit.gif" alt="IE exploit badge">
-        <img loading="lazy" src="badges/transnow2.gif" alt="trans badge">
-        <img loading="lazy" src="badges/bloodcovered.gif" alt="blood covered badge">
-        <img loading="lazy" src="badges/deletetwitter.gif" alt="deletetwitter badge">
-      </div>
-    </td></tr>
-  </table>
-</td>
-<td width="50%">
-  <table border="1" cellpadding="5">
-    <tr><td><h2>latest blog post</h2></td></tr>
-    <tr><td><marquee behavior="scroll" direction="left">10/7/2025</marquee></td></tr>
-    <tr><td><p>rethemed my page guys how do we like it!</p></td></tr>
-  </table>
-</td>
-</tr>
-</table>
-
-<section id="projects">
-    <div class="projects-header">
-    <h2>Projects</h2>
-    <div>
-      <button id="refreshProjects">Refresh</button>
-      <button id="sortProjects" class="sort-btn" data-sort="updated">Sort: Updated</button>
-    </div>
-  </div>
-  <div id="projectsList">Loading projects…</div>
-</section>
-
-<div id="currentTrack">Now Playing: none</div>
-
-<button id="backToTop" aria-label="Back to top">top</button>
 
 <script>
-  for(let i=0;i<50;i++){
-    let star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * window.innerWidth + 'px';
-    star.style.top = Math.random() * window.innerHeight + 'px';
-    star.style.animationDuration = (2 + Math.random()*3) + 's';
-    document.body.appendChild(star);
-  }
+let scene, camera, renderer;
+let starGeo, starMat, starLines;
+let warpSpeed = 0.5; 
+let targetSpeed = 0.5;
+let isDragging = false;
+let mouseX = 0, mouseY = 0;
+let camRotX = 0, camRotY = 0;
 
-  document.getElementById('enterBtn').addEventListener('click', () => {
-    document.getElementById('enterScreen').style.display = 'none';
+const STAR_COUNT = 4000;
+const BOUNDARY_Z = 2000;
 
-    const tracks = [
-      "setlist/kill.mp3",
-      "setlist/the more you know.mp3",
-      "setlist/I plan to leave the internet fuck your trend.mp3"
+function initThree() {
+    scene = new THREE.Scene();
+    scene.fog = new THREE.FogExp2(0x000000, 0.0006);
+
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 3000);
+    camera.position.z = 0;
+    camera.rotation.x = Math.PI / 2; 
+
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    document.body.appendChild(renderer.domElement);
+
+    const positions = [];
+    const colors = [];
+    const colorOpts = [
+        new THREE.Color(0x88ccff),
+        new THREE.Color(0xffffff),
+        new THREE.Color(0xaa88ff)
     ];
 
-    const audio = document.createElement('audio');
-    audio.autoplay = true;
-    audio.volume = 0.3;
-    document.body.appendChild(audio);
+    for(let i=0; i<STAR_COUNT; i++) {
+        const x = (Math.random() - 0.5) * 3000;
+        const y = (Math.random() - 0.5) * 3000;
+        const z = (Math.random() - 0.5) * BOUNDARY_Z;
+        
+        positions.push(x, y, z); 
+        positions.push(x, y, z); 
 
-    let current = 0;
-    function playTrack(i){
-      audio.src = tracks[i];
-      audio.play();
-      document.getElementById('currentTrack').textContent = 'Now Playing: ' + tracks[i].split('/')[1];
+        const c = colorOpts[Math.floor(Math.random() * colorOpts.length)];
+        colors.push(c.r, c.g, c.b);
+        colors.push(c.r, c.g, c.b);
     }
 
-    audio.addEventListener('ended', () => {
-      current++;
-      if(current < tracks.length){
-        playTrack(current);
-      } else {
-        document.getElementById('currentTrack').textContent = 'Now Playing: none';
-      }
+    starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    starGeo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+    starMat = new THREE.LineBasicMaterial({
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8
     });
 
-    playTrack(current);
-  });
-</script>
+    starLines = new THREE.LineSegments(starGeo, starMat);
+    scene.add(starLines);
 
-<!-- README Modal -->
-<div id="modalBackdrop" class="modal-backdrop" style="display:none" aria-hidden="true">
-  <div class="modal" role="document">
-    <button class="close" aria-label="Close">✕</button>
-    <h3 id="modalTitle">Repository</h3>
-    <div id="modalContent">Loading…</div>
-  </div>
-</div>
+    window.addEventListener('resize', onResize);
+    window.addEventListener('mousedown', () => isDragging = true);
+    window.addEventListener('mouseup', () => isDragging = false);
+    window.addEventListener('mousemove', onMouseMove);
 
-<script>
-  // modal + readme fetch + burst animation
-  const modalBackdrop = document.getElementById('modalBackdrop');
-  const modalTitle = document.getElementById('modalTitle');
-  const modalContent = document.getElementById('modalContent');
-  modalBackdrop.addEventListener('click', (e)=>{ if(e.target === modalBackdrop) closeModal(); });
-  modalBackdrop.querySelector('.close').addEventListener('click', closeModal);
+    animate();
+}
 
-  function openModal(){ modalBackdrop.style.display='flex'; modalBackdrop.classList.add('show'); modalBackdrop.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; }
-  function closeModal(){ modalBackdrop.classList.remove('show'); modalBackdrop.setAttribute('aria-hidden','true'); setTimeout(()=> modalBackdrop.style.display='none',180); document.body.style.overflow=''; }
+function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
 
-  async function openReadmeModal(owner, repo, title, url, description){
-    modalTitle.textContent = title;
-    modalContent.textContent = 'Loading README…';
-    openModal();
-    try{
-      const resp = await fetch(`https://api.github.com/repos/${owner}/${repo}/readme`, { headers: { Accept: 'application/vnd.github.v3.raw' } });
-      if(!resp.ok) throw new Error('No README');
-      const txt = await resp.text();
-      // simple markdown -> plaintext fallback (avoid heavy libs)
-      modalContent.textContent = txt;
-      // add a raw link
-      const link = document.createElement('a'); link.href = url; link.target='_blank'; link.rel='noopener noreferrer'; link.textContent = 'Open repository on GitHub'; link.style.display='block'; link.style.marginTop='12px';
-      modalContent.appendChild(link);
-    }catch(err){
-      modalContent.textContent = 'No README available.';
-    }
-  }
+function onMouseMove(e) {
+    if(!isDragging) return;
+    const dx = e.movementX || 0;
+    const dy = e.movementY || 0;
+    camRotY -= dx * 0.001;
+    camRotX -= dy * 0.001;
+}
 
-  // close on Escape
-  document.addEventListener('keydown', (e)=>{ if(e.key === 'Escape' && modalBackdrop.classList.contains('show')) closeModal(); });
+function animate() {
+    requestAnimationFrame(animate);
 
-  // spawn a small burst animation at screen coords
-  function spawnBurst(x,y){
-    const el = document.createElement('div'); el.className='burst'; document.body.appendChild(el);
-    el.style.left = x + 'px'; el.style.top = y + 'px';
-    requestAnimationFrame(()=> el.classList.add('animate'));
-    setTimeout(()=> el.remove(), 700);
-  }
-</script>
+    warpSpeed += (targetSpeed - warpSpeed) * 0.05;
 
-<script>
-  // Enhanced projects loader with local cache and refresh button
-  (function(){
-    const listEl = document.getElementById('projectsList');
-    const refreshBtn = document.getElementById('refreshProjects');
-    const CACHE_KEY = 'github_repos_lucy407_v1';
-    const CACHE_TTL = 1000 * 60 * 10; // 10 minutes
+    const positions = starGeo.attributes.position.array;
+    
+    for(let i=0; i < STAR_COUNT; i++) {
+        const i3 = i * 6; 
 
-    let currentSort = 'updated';
-    const sortBtn = document.getElementById('sortProjects');
-    sortBtn.addEventListener('click', ()=>{
-      // cycle sorts: updated -> stars -> name -> updated
-      currentSort = currentSort === 'updated' ? 'stars' : currentSort === 'stars' ? 'name' : 'updated';
-      sortBtn.textContent = currentSort === 'updated' ? 'Sort: Updated' : currentSort === 'stars' ? 'Sort: Stars' : 'Sort: Name';
-      fetchAndRender(true);
-    });
+        let x = positions[i3];
+        let y = positions[i3+1];
+        let z = positions[i3+2];
 
-    function render(repos){
-      if(!repos || repos.length === 0){ listEl.textContent = 'No public projects found.'; return; }
-      const container = document.createElement('div');
-      container.className = 'repo-list';
-      if(currentSort === 'updated') repos.sort((a,b)=> new Date(b.updated_at)-new Date(a.updated_at));
-      else if(currentSort === 'stars') repos.sort((a,b)=> (b.stargazers_count||0) - (a.stargazers_count||0));
-      else repos.sort((a,b)=> (a.name||'').localeCompare(b.name||''));
-      repos.forEach(r => {
-        const item = document.createElement('div');
-        item.className = 'repo panel';
-        item.setAttribute('tabindex','0');
-        item.setAttribute('role','button');
-        item.dataset.clone = r.clone_url;
-        item.dataset.owner = r.owner.login;
-        item.dataset.repo = r.name;
-        item.innerHTML = `
-          <div class="repo-head"><a href="${r.html_url}" target="_blank" rel="noopener noreferrer">${r.name}</a></div>
-          ${r.description?`<p>${r.description}</p>`:''}
-          <div class="meta">⭐ ${r.stargazers_count} • ${r.language || '—'} • updated ${new Date(r.updated_at).toLocaleDateString()}</div>
-          <div class="repo-controls">
-            <button class="detailsBtn">Details</button>
-            <button class="copyBtn">Copy Clone</button>
-            <a class="openBtn" href="${r.html_url}" target="_blank" rel="noopener noreferrer">Open</a>
-          </div>
-          <div class="repo-details" aria-hidden="true" style="display:none"></div>
-        `;
+        z += warpSpeed * 10; 
 
-        // attach interactive handlers with closures
-        (function(repo, el){
-          const detailsEl = el.querySelector('.repo-details');
-          const detailsBtn = el.querySelector('.detailsBtn');
-          const copyBtn = el.querySelector('.copyBtn');
-
-          detailsBtn.addEventListener('click', (ev)=>{
-            // open a modal with the README fetched on demand
-            ev.preventDefault();
-            openReadmeModal(repo.owner.login, repo.name, repo.name, repo.html_url, repo.description);
-          });
-
-          copyBtn.addEventListener('click', async (ev)=>{
-            try{
-              await navigator.clipboard.writeText(repo.clone_url);
-              showToast('Clone URL copied');
-              spawnBurst(ev.clientX, ev.clientY);
-            }catch(e){
-              showToast('Copy failed');
-            }
-          });
-        })(r, item);
-
-        container.appendChild(item);
-      });
-      listEl.innerHTML = '';
-      listEl.appendChild(container);
-
-      // reveal on scroll
-      const observer = new IntersectionObserver((entries)=>{
-        entries.forEach(en=>{ if(en.isIntersecting) en.target.classList.add('visible'); });
-      },{threshold:0.12});
-      container.querySelectorAll('.repo').forEach(el=>observer.observe(el));
-
-      // keyboard navigation inside repo list
-      let focusedIndex = 0;
-      const items = Array.from(container.querySelectorAll('.repo'));
-      items.forEach((it, idx)=>{
-        it.addEventListener('keydown', (ev)=>{
-          if(ev.key === 'ArrowDown'){ ev.preventDefault(); const next = items[(idx+1)%items.length]; next.focus(); }
-          else if(ev.key === 'ArrowUp'){ ev.preventDefault(); const prev = items[(idx-1+items.length)%items.length]; prev.focus(); }
-          else if(ev.key === 'Enter'){ ev.preventDefault(); const btn = it.querySelector('.detailsBtn'); btn && btn.click(); }
-          else if(ev.key.toLowerCase() === 'c'){ ev.preventDefault(); const clone = it.dataset.clone; navigator.clipboard && navigator.clipboard.writeText(clone).then(()=>showToast('Clone URL copied')); }
-        });
-      });
-    }
-
-    function setCache(data){
-      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({ts:Date.now(),data})); }catch(e){}
-    }
-
-    function getCache(){
-      try{ const raw = localStorage.getItem(CACHE_KEY); if(!raw) return null; const parsed = JSON.parse(raw); if(Date.now()-parsed.ts > CACHE_TTL) return null; return parsed.data;}catch(e){return null}
-    }
-
-    function fetchAndRender(force=false){
-      const cached = getCache();
-      if(cached && !force){ render(cached); return; }
-      listEl.textContent = 'Loading projects…';
-      fetch('https://api.github.com/users/lucy407/repos?per_page=100')
-        .then(res => {
-          if(!res.ok) throw new Error('GitHub API error ' + res.status);
-          return res.json();
-        })
-        .then(repos => { setCache(repos); render(repos); })
-        .catch(err => {
-          const fallback = getCache();
-          if(fallback){ render(fallback); }
-          else listEl.textContent = 'Could not load projects: ' + err.message;
-        });
-    }
-
-    refreshBtn.addEventListener('click', ()=>{ fetchAndRender(true); });
-    fetchAndRender();
-
-    // removed project search per user request
-  })();
-</script>
-
-<script>
-  // QoL: keyboard/UX improvements for the enter screen and audio
-  (function(){
-    const enter = document.getElementById('enterBtn');
-    const enterScreen = document.getElementById('enterScreen');
-
-    function hideIntro(){
-      enterScreen.classList.add('fade-out');
-      setTimeout(()=> enterScreen.style.display='none',450);
-    }
-
-    enter.addEventListener('click', hideIntro);
-
-    // allow Enter or Space to dismiss when focused
-    document.addEventListener('keydown', (e)=>{
-      if(document.body.contains(enterScreen) && enterScreen.style.display !== 'none'){
-        if(e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar'){
-          e.preventDefault(); hideIntro();
+        if(z > 1000) {
+            z -= 2000;
+            x = (Math.random() - 0.5) * 3000;
+            y = (Math.random() - 0.5) * 3000;
         }
-        if(e.key === 'Escape'){
-          e.preventDefault(); hideIntro();
-        }
-      }
-    });
-  })();
 
-  // small retro clock and back-to-top logic
-  (function(){
-    const clock = document.getElementById('retroClock');
-    function tick(){
-      try{
-        // Use Intl to format time in Eastern Time (handles EST/EDT automatically)
-        const now = new Date();
-        const parts = new Intl.DateTimeFormat('en-US', {
-          timeZone: 'America/New_York',
-          hour12: true,
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit'
-        }).formatToParts(now).reduce((acc, p) => { acc[p.type] = p.value; return acc; }, {});
-        const period = parts.dayPeriod || parts.period || '';
-        clock.textContent = `${parts.hour}:${parts.minute}:${parts.second}${period? ' ' + period : ''}`;
-      }catch(e){
-        // Fallback to local 12-hour time if Intl or timezone isn't available
-        const d = new Date();
-        let h = d.getHours();
-        const period = h >= 12 ? 'PM' : 'AM';
-        h = h % 12 || 12; // convert 0 => 12
-        const hh = String(h).padStart(2,'0');
-        const mm = String(d.getMinutes()).padStart(2,'0');
-        const ss = String(d.getSeconds()).padStart(2,'0');
-        clock.textContent = `${hh}:${mm}:${ss} ${period}`;
-      }
+        const tailLen = warpSpeed * 30;
+
+        positions[i3] = x;
+        positions[i3+1] = y;
+        positions[i3+2] = z;
+
+        positions[i3+3] = x;
+        positions[i3+4] = y;
+        positions[i3+5] = z - tailLen;
     }
-    if(clock) setInterval(tick,1000), tick();
 
-    const back = document.getElementById('backToTop');
-    window.addEventListener('scroll', ()=>{ if(window.scrollY > 220) back.classList.add('show'); else back.classList.remove('show'); });
-    back.addEventListener('click', ()=> window.scrollTo({top:0,behavior:'smooth'}));
-  })();
+    starGeo.attributes.position.needsUpdate = true;
 
-  // Fade-in body once JS runs
-  document.documentElement.classList.remove('fade-in');
-  document.documentElement.classList.add('loaded');
+    camera.rotation.x += (camRotX - camera.rotation.x) * 0.1;
+    camera.rotation.y += (camRotY - camera.rotation.y) * 0.1;
+    
+    renderer.render(scene, camera);
+}
 
-  // small toast helper
-  function showToast(msg){
-    let t = document.querySelector('.toast');
-    if(!t){ t = document.createElement('div'); t.className='toast'; document.body.appendChild(t); }
-    t.textContent = msg; t.classList.add('show');
-    clearTimeout(t._t);
-    t._t = setTimeout(()=> t.classList.remove('show'),2000);
-  }
+const startScreen = document.getElementById('startScreen');
+const lyricsDiv = document.getElementById('lyrics');
+const skipBtn = document.getElementById('skipBtn');
+const music = document.getElementById('music');
+const mainContent = document.getElementById('mainContent');
+const flashOverlay = document.querySelector('.flash-overlay');
+const musicPopup = document.getElementById('musicPopup');
+const navLinks = document.querySelectorAll('.nav-link');
+
+let lyrics = [];
+let isMainSiteActive = false;
+let autoSkipTimer;
+
+startScreen.addEventListener('click', startExperience);
+
+skipBtn.addEventListener('click', (e) => {
+    e.stopPropagation(); 
+    if(!isMainSiteActive) goMainSite();
+});
+
+async function startExperience() {
+    startScreen.style.pointerEvents = 'none';
+    gsap.to(startScreen, { opacity: 0, duration: 1, onComplete: () => startScreen.style.display = 'none' });
+    
+    initThree();
+    
+    try {
+        music.volume = 0.8;
+        await music.play();
+        musicPopup.classList.add('show'); 
+    } catch(err) {
+        console.log("Audio autoplay block");
+    }
+
+    try {
+        const res = await fetch('lyricpotato.en_US.srt');
+        const text = await res.text();
+        lyrics = parseSrt(text);
+    } catch(e) {
+        lyrics = [{start:0, end:3, text:"welcome..."}];
+    }
+
+    music.addEventListener('timeupdate', updateLyrics);
+
+    setTimeout(() => {
+        if(!isMainSiteActive) skipBtn.classList.add('visible');
+    }, 3000);
+
+    const lastTime = lyrics.length > 0 ? lyrics[lyrics.length-1].end : 10;
+    autoSkipTimer = setTimeout(() => {
+        if(!isMainSiteActive) goMainSite();
+    }, (lastTime + 2) * 1000);
+}
+
+function updateLyrics() {
+    if(isMainSiteActive) return;
+    const t = music.currentTime;
+    const line = lyrics.find(l => t >= l.start && t <= l.end);
+    lyricsDiv.innerText = line ? line.text : '';
+}
+
+function goMainSite() {
+    if(isMainSiteActive) return;
+    isMainSiteActive = true;
+    clearTimeout(autoSkipTimer);
+
+    skipBtn.classList.remove('visible');
+    lyricsDiv.style.display = 'none';
+
+    targetSpeed = 40; 
+
+    gsap.to(music, { volume: 0.2, duration: 3 });
+
+    setTimeout(() => {
+        gsap.to(flashOverlay, { opacity: 1, duration: 0.2, yoyo: true, repeat: 1 });
+    }, 1500);
+
+    setTimeout(() => {
+        targetSpeed = 0.8; 
+        
+        mainContent.style.display = 'block';
+        document.body.classList.add('active-site');
+        
+        loadPage('home');
+        
+        gsap.to(musicPopup, { bottom: "30px", right: "30px", duration: 1 });
+    }, 1800);
+}
+
+function parseSrt(srt) {
+    const blocks = srt.split('\n\n');
+    return blocks.map(b => {
+        const lines = b.split('\n');
+        if(lines.length < 3) return null;
+        const times = lines[1].split(' --> ');
+        return {
+            start: timeToSec(times[0]),
+            end: timeToSec(times[1]),
+            text: lines.slice(2).join('\n')
+        };
+    }).filter(x => x);
+}
+
+function timeToSec(str) {
+    if(!str) return 0;
+    const p = str.replace(',', '.').split(':');
+    return (parseFloat(p[0])*3600) + (parseFloat(p[1])*60) + parseFloat(p[2]);
+}
+
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+        navLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        const page = link.dataset.page;
+        loadPage(page);
+    });
+});
+
+async function loadPage(page) {
+    const container = document.getElementById('dynamicContent');
+    
+    container.classList.remove('fade-in');
+    
+    setTimeout(async () => {
+        container.innerHTML = '';
+        
+        if(page === 'home') {
+            container.innerHTML = `
+                <div class="hero-section">
+                    <h1 class="hero-title">lucys.space</h1> <p class="hero-subtitle">beginner fullstack developer</p> </div>
+                <div class="about-card">
+                    <h2>about me</h2> <p>
+                        im lucy! im a 15 year old developer, i mainly make websites but ive been learning fullstack development recently. im from the new york suburbs & im also a musician part time. i love making cool projects and experimenting with new tech. you can check out my software i make for linux distro's or see my blog to get to know me more!
+                    </p>
+                    
+                </div>
+            `;
+        } else if(page === 'projects') {
+            container.innerHTML = `<h2>selected projects</h2><div id="repo-grid" class="project-grid">loading...</div>`;
+            await fetchProjects();
+        } else if(page === 'blog') {
+            container.innerHTML = `<h2>latest entries</h2><div id="blog-grid" class="project-grid">loading...</div>`;
+            await fetchBlog();
+        }
+
+        container.classList.add('fade-in');
+    }, 300);
+}
+
+async function fetchProjects() {
+    const grid = document.getElementById('repo-grid');
+    try {
+        const res = await fetch('https://api.github.com/users/lucy407/repos?sort=updated&per_page=6');
+        const data = await res.json();
+        grid.innerHTML = '';
+        data.forEach(repo => {
+            const el = document.createElement('div');
+            el.className = 'card';
+            el.innerHTML = `
+                <h3>${repo.name.toLowerCase()}</h3> <p>${repo.description ? repo.description.toLowerCase() : 'no description provided.'}</p> <a href="${repo.html_url}" target="_blank">view code &rarr;</a> `;
+            grid.appendChild(el);
+        });
+    } catch(e) {
+        grid.innerHTML = 'failed to load projects.';
+    }
+}
+
+async function fetchBlog() {
+    const grid = document.getElementById('blog-grid');
+    try {
+        const res = await fetch('blog.json');
+        const data = await res.json();
+        grid.innerHTML = '';
+        data.forEach(post => {
+            const el = document.createElement('div');
+            el.className = 'card';
+            el.innerHTML = `
+                <h3>${post.title.toLowerCase()}</h3> <p>${post.content.substring(0, 100).toLowerCase()}...</p> <a href="#">read more</a> `;
+            grid.appendChild(el);
+        });
+    } catch(e) {
+        grid.innerHTML = 'failed to load blog posts.';
+    }
+}
+
 </script>
-
 </body>
 </html>
